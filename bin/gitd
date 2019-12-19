@@ -1,0 +1,14 @@
+#!/bin/bash
+
+date=$1
+
+if [[ $# -eq 0 ]]; then
+  echo "Please provide a date."
+  exit 0
+fi
+
+echo "Amending to date $date."
+GIT_COMMITTER_DATE="$date" git commit \
+  --amend                             \
+  --no-edit                           \
+  --date "$date"
