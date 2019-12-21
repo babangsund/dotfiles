@@ -1,0 +1,3 @@
+#!/bin/bash
+
+rg -l0 $1 | xargs -0o nvim
