@@ -2,7 +2,11 @@
     " Set utf8 as standard encoding and en_US as the standard language
     set encoding=utf8
 
+    " Use system clipboard
     set clipboard=unnamed
+
+    " Enable syntax highlighting
+    syntax enable
 
     " Enable filetype plugins
     filetype plugin on
@@ -52,9 +56,6 @@
     set t_vb=
     set tm=500
 
-    " Enable syntax highlighting
-    syntax enable
-
     " Don't wrap lines
     set nowrap
 
@@ -73,7 +74,7 @@
     set laststatus=2
 
     " Only paint n columns. Lower is better (Performance)
-    set synmaxcol=100
+    set synmaxcol=128
 
     " Highlight current line
     "set cursorline
@@ -111,6 +112,9 @@
     Plug 'justinmk/vim-sneak'
     Plug '/usr/local/opt/fzf'
     Plug 'junegunn/fzf.vim'
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+    Plug 'edkolev/tmuxline.vim'
 
     " List ends here. Plugins become visible to Vim after this call.
     call plug#end()
@@ -119,6 +123,9 @@
 " Configure Plugins {{
     " Gruvbox
     let g:gruvbox_contrast_dark='hard'
+
+    " Airline
+    let g:airline_theme='gruvbox'
 
     " ALE
     let g:ale_sign_column_always = 1
