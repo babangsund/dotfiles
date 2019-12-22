@@ -1,0 +1,16 @@
+[core]
+	editor    = nvim
+  hooksPath = "~/.config/git/hooks"
+
+[user]
+  name      = Benjamin Bangsund
+  email     = babangsund@gmail.com
+
+[alias]
+  s         = "status"
+  co        = "checkout"
+  root      = "rev-parse --show-toplevel"
+  l         = "log --graph --abbrev-commit --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'"
+
+[includeIf "gitdir:~/Development/amazon/"]
+	path      = "~/.config/git/config-amazon"
