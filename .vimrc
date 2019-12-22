@@ -1,17 +1,18 @@
 " Configuration {{
-    let mapleader=' '
+    " Set utf8 as standard encoding and en_US as the standard language
+    set encoding=utf8
 
-    " Use system clipboard
     set clipboard=unnamed
-
-    " Enable syntax highlighting
-    syntax enable
 
     " Enable filetype plugins
     filetype plugin on
     filetype indent on
 
-    " Open new split panes to the right and bottom
+    " With a map leader it"s possible to do extra key combinations
+    " like <leader>w saves the current file
+    let mapleader=' '    
+
+    " Open new split panes to right and bottom
     set splitbelow
     set splitright
 
@@ -21,7 +22,6 @@
     " Enable wildmenu
     set wildmenu
 
-    " Set line numbers
     set number
     set relativenumber
 
@@ -37,7 +37,7 @@
     " Makes search act like search in modern browsers
     set incsearch 
 
-    " Don"t redraw while executing macros
+    " Don"t redraw while executing macros (good performance config)
     set lazyredraw 
 
     " Show matching brackets when text indicator is over them
@@ -46,14 +46,14 @@
     " A buffer becomes hidden when it is abandoned
     set hidden
 
-    " No sounds
+    " No annoying sound on errors
     set noerrorbells
     set novisualbell
-    set tm=500
     set t_vb=
+    set tm=500
 
-    " Set utf8 as standard encoding and en_US as the standard language
-    set encoding=utf8
+    " Enable syntax highlighting
+    syntax enable
 
     " Don't wrap lines
     set nowrap
@@ -72,20 +72,33 @@
     " Always show the status line
     set laststatus=2
 
-    " Stop vim trying to syntax highlight long lines, typically found in minified
-    " files. This greatly reduces lag yet is still wide enough for large displays
-    set synmaxcol=250
+    " Only paint n columns. Lower is better (Performance)
+    set synmaxcol=100
 
     " Highlight current line
-    set cursorline
+    "set cursorline
 " }}
 
 " Mappings {{
     " Search for visual selection
-    vnoremap // y/\V<C-R>=escape(@','/\')<CR><CR>k
+    vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
 
     " Unselect visual
-    nnoremap <leader>/ :noh<CR>
+    nnoremap <silent> <leader>/ :noh<CR>
+
+    " Save vimrc
+    nmap <silent> <leader>sv :so $MYVIMRC<CR>
+
+    vnoremap <silent> * :<C-U>
+      \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+      \gvy/<C-R><C-R>=substitute(
+      \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+      \gV:call setreg('"', old_reg, old_regtype)<CR>
+    vnoremap <silent> # :<C-U>
+      \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+      \gvy?<C-R><C-R>=substitute(
+      \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+      \gV:call setreg('"', old_reg, old_regtype)<CR>
 " }}
 
 " Plugins {{
@@ -96,6 +109,8 @@
     Plug 'morhetz/gruvbox'
     Plug 'dense-analysis/ale'
     Plug 'justinmk/vim-sneak'
+    Plug '/usr/local/opt/fzf'
+    Plug 'junegunn/fzf.vim'
 
     " List ends here. Plugins become visible to Vim after this call.
     call plug#end()
@@ -121,9 +136,18 @@
     map F <Plug>Sneak_F
     map t <Plug>Sneak_t
     map T <Plug>Sneak_T
+
+    " FZF
+    nnoremap <silent> <C-P> :Files<CR>
+
+    command! -bang -nargs=? -complete=dir Files
+        \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--layout=reverse', '--info=inline']}), <bang>0)
+
+    command! -bang -nargs=? -complete=dir Rg
+        \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--layout=reverse', '--info=inline']}), <bang>0)
 " }}
 
 
-"set termguicolors
+set termguicolors
 set background=dark
 colorscheme gruvbox
