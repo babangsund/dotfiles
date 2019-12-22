@@ -3,6 +3,7 @@
 
 # General {{
   export PATH=$HOME/bin:$PATH
+  export MYVIMRC=$HOME/.vimrc
 # }}
 
 # Alias {{
@@ -15,6 +16,10 @@
 # Path Alias {{
   shopt -s cdable_vars # https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#The-Shopt-Builtin
   export dev=$HOME/Development
+# }}
+
+# Alacritty {{
+  source [ -f $HOME/.bash_completion/alacritty ] && $HOME/.bash_completion/alacritty
 # }}
 
 # NVM {{
@@ -30,15 +35,23 @@
 
 # FZF {{
   export FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs"
-  [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+  [ -f $HOME/.fzf.bash ] && source $HOME/.fzf.bash
 
   vf() {
     file="$(fzf)"
     [[ -n $file ]] && vim $file
   }
 
+  fd() {
+    dir=$(find ${1:-.} -path '*/\.*' -prune \
+      -o -type d -print 2> /dev/null | fzf +m)
+
+    [[ -n $dir ]] && cd "$dir"
+  }
+
   bind -x '"\C-p": vf';
 # }}
+
 
 # Git {{
   parse_git_branch() {
