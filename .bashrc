@@ -4,6 +4,11 @@
 # General {{
   export PATH=$HOME/bin:$PATH
   export MYVIMRC=$HOME/.vimrc
+  export GIT=$HOME/.config/git
+# }}
+
+# Completions {{
+  source $HOME/.bash_completion/alacritty
 # }}
 
 # Alias {{
@@ -11,15 +16,10 @@
   alias vi="nvim"
   alias vim="nvim"
   alias @='cd $(git rev-parse --show-cdup)'
-# }}
 
 # Path Alias {{
   shopt -s cdable_vars # https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#The-Shopt-Builtin
   export dev=$HOME/Development
-# }}
-
-# Alacritty {{
-  source [ -f $HOME/.bash_completion/alacritty ] && $HOME/.bash_completion/alacritty
 # }}
 
 # NVM {{
@@ -38,20 +38,33 @@
   [ -f $HOME/.fzf.bash ] && source $HOME/.fzf.bash
 
   vf() {
+    local file
     file="$(fzf)"
     [[ -n $file ]] && vim $file
   }
 
   fd() {
+    local dir
     dir=$(find ${1:-.} -path '*/\.*' -prune \
       -o -type d -print 2> /dev/null | fzf +m)
 
     [[ -n $dir ]] && cd "$dir"
   }
 
+  fbr() {
+    local branches branch
+    branches=$(git --no-pager branch -vv) &&
+    branch=$(echo "$branches" | fzf +m) &&
+    git checkout $(echo "$branch" | awk '{print $1}' | sed "s/.* //")
+  }
+
+  fif() {
+    [ ! "$#" -gt 0 ] && return 1
+    rg --files-with-matches --no-messages "$1" | fzf --preview "highlight -O ansi -l {} 2> /dev/null | rg --colors 'match:bg:yellow' --ignore-case --pretty --context 10 '$1' || rg --ignore-case --pretty --context 10 '$1' {}"
+  }
+
   bind -x '"\C-p": vf';
 # }}
-
 
 # Git {{
   parse_git_branch() {
