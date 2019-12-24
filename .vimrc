@@ -1,4 +1,8 @@
 " Configuration {{
+    " With a map leader it"s possible to do extra key combinations
+    " like <leader>w saves the current file
+    let mapleader=' '
+
     " Set utf8 as standard encoding and en_US as the standard language
     set encoding=utf8
 
@@ -11,10 +15,6 @@
     " Enable filetype plugins
     filetype plugin on
     filetype indent on
-
-    " With a map leader it"s possible to do extra key combinations
-    " like <leader>w saves the current file
-    let mapleader=' '    
 
     " Open new split panes to right and bottom
     set splitbelow
@@ -76,8 +76,8 @@
     " Only paint n columns. Lower is better (Performance)
     set synmaxcol=128
 
-    " Highlight current line
-    "set cursorline
+    " Disable auto newline comment
+    autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 " }}
 
 " Mappings {{
@@ -90,11 +90,14 @@
     " Save vimrc
     nmap <silent> <leader>sv :so $MYVIMRC<CR>
 
+    " Jump to next visual match
     vnoremap <silent> * :<C-U>
       \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
       \gvy/<C-R><C-R>=substitute(
       \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
       \gV:call setreg('"', old_reg, old_regtype)<CR>
+
+    " Jump to previous visual match
     vnoremap <silent> # :<C-U>
       \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
       \gvy?<C-R><C-R>=substitute(
@@ -115,6 +118,7 @@
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
     Plug 'edkolev/tmuxline.vim'
+    Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
     " List ends here. Plugins become visible to Vim after this call.
     call plug#end()
@@ -147,14 +151,29 @@
     " FZF
     nnoremap <silent> <C-P> :Files<CR>
 
+    " Files /w preview
     command! -bang -nargs=? -complete=dir Files
-        \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--layout=reverse', '--info=inline']}), <bang>0)
+          \ call fzf#vim#files(
+          \ <q-args>, fzf#vim#with_preview({'options': ['--layout=reverse', '--info=inline']}), <bang>0)
 
-    command! -bang -nargs=? -complete=dir Rg
-        \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--layout=reverse', '--info=inline']}), <bang>0)
+    " Ripgrep /w preview
+    command! -bang -nargs=* Rg
+          \ call fzf#vim#grep(
+          \ 'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
+          \ fzf#vim#with_preview(), <bang>0)
+
+    " Git grep /w preview
+    command! -bang -nargs=* GGrep
+          \ call fzf#vim#grep(
+          \ 'git grep --line-number '.shellescape(<q-args>), 0,
+          \ fzf#vim#with_preview({'dir': systemlist('git rev-parse --show-toplevel')[0]}), <bang>0)
 " }}
 
 
-set termguicolors
-set background=dark
-colorscheme gruvbox
+" Theme (truecolor) {{
+  set termguicolors
+  set background=dark
+  colorscheme gruvbox
+  " Disable background color (breaks tmux)
+  hi! Normal ctermbg=NONE guibg=NONE
+" }}
