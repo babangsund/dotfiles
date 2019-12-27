@@ -3,7 +3,7 @@
   hooksPath = "~/.config/git/hooks"
 
 [user]
-  name      = Benjamin Bangsund
+  name      = Benjamin Alexander Bangsund
   email     = babangsund@gmail.com
 
 [alias]
